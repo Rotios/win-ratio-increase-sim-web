@@ -1,130 +1,158 @@
-import {Options, OriginalStats, SimulationInput} from './simulator.models.js'
+import {
+  FullSimulationResult,
+  Options,
+  OriginalStats,
+  SimulationInput,
+  SingleSimulationResult,
+} from '../models/simulator.models.js';
 
-async function simulate(simulation_id: number, original_stats: OriginalStats, options: Options) {
-    console.log(`Starting sim ${simulation_id}`)
-    const start_time = Date.now();
+async function simulate(
+  simulationId: number,
+  originalStats: OriginalStats,
+  options: Options,
+) {
+  console.log(`Starting sim ${simulationId}`);
+  const startTime = Date.now();
 
-    let wins = original_stats.wins;
-    let ties = original_stats.ties ?? 0;
-    let losses = original_stats.losses;
-    let battles = original_stats.battles;
+  let { wins, losses, battles } = originalStats;
 
-    let battle_diff = 0;
+  let battleDiff = 0;
 
-    let percent = wins/battles;
+  let percent = wins / battles;
 
-    
-    while (percent < (options.target_percentage/100) && battle_diff < options.max_simulated_battles) {
-        battle_diff += 1;
-        battles += 1;
-        let rand = Math.random();
-        if (rand <= (options.average_tierate / 100))
-            ties += 1
-        else if (rand <= (options.average_winrate / 100))
-            wins += 1
-        else
-            losses += 1
-        
-        percent = wins/battles
-    }
+  while (
+    percent < options.targetPercentage / 100 &&
+    battleDiff < options.maxSimulatedBattles
+  ) {
+    battleDiff += 1;
+    battles += 1;
+    const rand = Math.random();
+    if (rand <= options.averageWinrate / 100) wins += 1;
+    else losses += 1;
 
-    console.log(`Ending sim ${simulation_id}`)
-    return {
-        'original_stats': original_stats,
-        'new_stats': {
-            'wins': wins,
-            'losses': losses,
-            'ties': ties,
-            'total_battles': battles,
-        },
-        'battles_simulated': battle_diff,
-        'percent': percent,
-        'simulation_number': simulation_id,
-        'total_time': Date.now() - start_time
-    }
+    percent = wins / battles;
+  }
+
+  console.log(`Ending sim ${simulationId}`);
+  return {
+    originalStats,
+    newStats: {
+      wins,
+      losses,
+      ties: originalStats.ties,
+      battles,
+    },
+    battlesSimulated: battleDiff,
+    percent: (percent * 100)?.toFixed(2),
+    simulationNumber: simulationId,
+    totalTime: Date.now() - startTime,
+  } as SingleSimulationResult;
 }
 
-async function run_threads(num_simulations: number, original_stats: OriginalStats, options: Options) {
-    const threads = []
-    for (let i = 0; i < num_simulations; i++) {
-        console.log(`Starting thread ${i} of ${num_simulations} threads.`)
+async function runThreads(
+  numSimulations: number,
+  originalStats: OriginalStats,
+  options: Options,
+) {
+  const threads = [];
+  for (let i = 0; i < numSimulations; i += 1) {
+    console.log(`Starting thread ${i} of ${numSimulations} threads.`);
 
-        threads.push(simulate(i, original_stats, options))
-    }
+    threads.push(simulate(i, originalStats, options));
+  }
 
-    return await Promise.all(threads)
-}
-
-function validate_event(event: SimulationInput) {
-    
+  return Promise.all(threads);
 }
 
 function mean(array: number[]) {
-    return array.reduce((acc, v) => acc + v, 0) / array.length
+  return array.reduce((acc, v) => acc + v, 0) / array.length;
 }
 
-export async function handle_event(event: SimulationInput) {
-    const t0 = Date.now();
-
-    validate_event(event)
-
-    const total_wins = event.wins;
-    const total_battles = event.battles;
-    const average_winrate = event.average_winrate;
-    const target_percentage = event.target_percentage;
-
-    let max_simulated_battles = total_battles * total_battles
-
-    if (max_simulated_battles < 1000) max_simulated_battles = 1000
-
-    const num_simulations = 1000
-
-    const total_losses = total_battles - total_wins;
-
-    const options = {
-        max_simulated_battles: max_simulated_battles,
-        average_winrate: average_winrate,
-        target_percentage: target_percentage,
-        average_tierate: 0
+function findMode(newStats: OriginalStats[]) {
+  const mp = {} as any;
+  let mx = 0;
+  let md = newStats[0];
+  for (const stat of newStats) {
+    const curNum = mp[stat.battles];
+    mp[stat.battles] = curNum ? 1 : curNum + 1;
+    const updatedNum = mp[stat.battles];
+    if (updatedNum > mx) {
+      mx = updatedNum;
+      md = stat;
     }
+  }
 
-    const original_stats = {
-        'wins': total_wins,
-        'losses': total_losses,
-        'ties': 0,
-        'battles': total_battles,
-    }
+  return md;
+}
 
-    console.log(`Starting a total of ${num_simulations} threads.`)
-    const statistics = await run_threads(num_simulations, original_stats, options)
-    console.log(`Finished waiting on a total of ${num_simulations} threads.`)
+export async function handleEvent(event: SimulationInput) {
+  const t0 = Date.now();
 
-    const num_diff_battles = statistics.map(stat=>stat.battles_simulated).filter(stat=>!!stat)
-    
-    const avg_battles_required = mean(num_diff_battles)
+  const { wins, battles, averageWinrate, targetPercentage } = event;
 
-    const max_battles_required = Math.max(...num_diff_battles)
+  let maxSimulatedBattles = battles * battles;
 
-    const min_battles_required = Math.min(...num_diff_battles)
+  if (maxSimulatedBattles < 1000) maxSimulatedBattles = 1000;
 
-    const sim_times = statistics.map(stat=>stat.total_time)
-    
-    const avg_sim_time = mean(sim_times)
+  const numSimulations = 1000;
 
-    return {
-        total_time: Date.now() - t0,
-        average_sim_time: avg_sim_time,
-        average_win_rate: average_winrate,
-        target_win_rate: target_percentage,
-        average_battles_required: avg_battles_required,
-        max_battles_required,
-        min_battles_required,
-        original_information: original_stats,
-        num_simulations,
-        max_allowed_battles: max_simulated_battles,
-        statistics
-    }
+  const losses = battles - wins;
 
+  const options = {
+    maxSimulatedBattles,
+    averageWinrate,
+    targetPercentage,
+    averageTierate: 0,
+  } as Options;
+
+  const originalStats = {
+    wins,
+    losses,
+    ties: 0,
+    battles,
+  } as OriginalStats;
+
+  console.log(`Starting a total of ${numSimulations} threads.`);
+  const statistics = await runThreads(numSimulations, originalStats, options);
+  console.log(`Finished waiting on a total of ${numSimulations} threads.`);
+
+  const numDiffBattles = statistics
+    .map(stat => stat.battlesSimulated)
+    .filter(stat => !!stat);
+
+  const averageBattlesRequired = mean(numDiffBattles);
+
+  const maxBattlesRequired = Math.max(...numDiffBattles);
+
+  const minBattlesRequired = Math.min(...numDiffBattles);
+
+  const simTimes = statistics.map(stat => stat.totalTime);
+
+  const averageSimTime = mean(simTimes);
+
+  const averageLosses = mean(statistics.map(stat => stat.newStats.losses));
+
+  const averageWins = mean(statistics.map(stat => stat.newStats.wins));
+
+  const mode = findMode(statistics.map(stat => stat.newStats));
+
+  return {
+    totalTime: Date.now() - t0,
+    averageSimTime,
+    averageLosses,
+    averageWins,
+    mode,
+    newAverageWinrate: mean(
+      statistics.map(stat => Number(stat.percent)),
+    ).toFixed(2),
+    averageBattlesRequired,
+    maxBattlesRequired,
+    minBattlesRequired,
+    originalInformation: originalStats,
+    numSimulations,
+    maxAllowedBattles: maxSimulatedBattles,
+    statistics,
+  } as FullSimulationResult;
 }
 
 // handle_event({

@@ -20,7 +20,9 @@
     "@vaadin/integer-field": "^24.4.8",
     "@vaadin/number-field": "^24.4.8",
     "@vaadin/button": "^24.4.8",
+    "@vaadin/grid": "^24.4.8",
     "@vaadin/text-field": "^24.4.8",
+    "@vaadin/horizontal-layout": "^24.4.8",
     "class-validator": "^0.14.1",
     "lit": "^3.1.4"
   },

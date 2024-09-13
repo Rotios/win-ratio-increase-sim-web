@@ -3,7 +3,6 @@ import { css } from 'lit';
 export const STYLES = [
   css`
     :host {
-      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -14,10 +13,15 @@ export const STYLES = [
       margin: 0 auto;
       text-align: center;
       background-color: var(--win-ratio-increase-sim-web-background-color);
+      padding-bottom: 25px;
     }
 
-    main {
-      flex-grow: 1;
+    .form {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, 200px);
+      gap: 10px;
+      align-items: baseline;
+      padding-bottom: 10px;
     }
   `,
 ];

@@ -3,7 +3,6 @@ import { css } from 'lit';
 export const STYLES = [
   css`
     :host {
-      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
