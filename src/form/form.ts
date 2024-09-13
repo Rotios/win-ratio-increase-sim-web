@@ -36,14 +36,17 @@ export class WinRatioForm extends LitElement {
         >New Simulation?
       </vaadin-button>`;
     }
+    const stepNumber = 0.01;
+    const { wins, battles, averageWinrate, targetPercentage } = this.input;
+    const currentWinRate = (wins / battles) * 100;
+    const currentWinRateStr = currentWinRate.toFixed(2);
 
     return html`
       <div class="form" @change=${this.formValueUpdated}>
         <vaadin-integer-field
           label="Battles"
           name="battles"
-          .value=${this.input.battles}
-          pattern="\\d+"
+          .value=${battles}
           required
           prevent-invalid-input
           error-message="Quantity must be a number"
@@ -51,46 +54,37 @@ export class WinRatioForm extends LitElement {
         <vaadin-integer-field
           label="Wins"
           name="wins"
-          .value=${this.input.wins}
-          max=${this.input.battles}
+          .value=${wins}
+          max=${battles}
           required
           prevent-invalid-input
-          error-message="Quantity must be a number between 0 and Number of Battles: ${this
-            .input.battles}"
+          error-message="Quantity must be a number between 0 and ${battles}"
         ></vaadin-integer-field>
         <vaadin-number-field
           label="Overall Win Rate"
-          .value=${((this.input.wins / this.input.battles) * 100).toFixed(2)}
-          min="0"
+          .value=${currentWinRateStr}
           readOnly="true"
-          max="100"
           error-message="Quantity must be a number between 0 and 100"
         ></vaadin-number-field>
         <vaadin-number-field
           label="Recent Average Win Rate"
           name="averageWinrate"
-          .value=${this.input.averageWinrate}
-          min=${((this.input.wins / this.input.battles) * 100).toFixed(2)}
-          required
+          min=${currentWinRate + stepNumber}
           max="100"
-          error-message="Quantity must be a number greater than your existing win rate ${(
-            (this.input.wins / this.input.battles) *
-            100
-          ).toFixed(2)}"
+          .value=${averageWinrate}
+          step=${stepNumber}
+          required
+          error-message="Quantity must be in increments of 0.01 and greater than ${currentWinRateStr}"
         ></vaadin-number-field>
         <vaadin-number-field
           label="Target Win Rate"
           name="targetPercentage"
-          min=${((this.input.wins / this.input.battles) * 100).toFixed(2)}
-          max=${this.input.averageWinrate > 0 ? this.input.averageWinrate : 0}
-          .value=${this.input.targetPercentage}
-          pattern="\\d+\\.\\d+"
+          min=${currentWinRate + stepNumber}
+          max=${averageWinrate > 0 ? averageWinrate - stepNumber : 0}
+          .value=${targetPercentage}
+          step=${stepNumber}
           required
-          error-message="Quantity must be a number greater than your existing win rate of ${(
-            (this.input.wins / this.input.battles) *
-            100
-          ).toFixed(2)} and your recent win rate of ${this.input
-            .averageWinrate}"
+          error-message="Quantity must be in increments of 0.01, greater than ${currentWinRateStr} and less than ${averageWinrate}."
         ></vaadin-number-field>
 
         <vaadin-button
@@ -107,7 +101,7 @@ export class WinRatioForm extends LitElement {
   }
 
   async dispatchInputEvent() {
-    const validation = await this.validate();
+    const validation = this.validate_form();
     if (!validation) {
       return;
     }
@@ -136,6 +130,7 @@ export class WinRatioForm extends LitElement {
 
   async formValueUpdated(e: { target: HTMLInputElement }) {
     if (this.errors.length > 0) {
+      this.buttonDisabled = true;
       return;
     }
     if (e.target.name) {
@@ -146,24 +141,21 @@ export class WinRatioForm extends LitElement {
 
       console.log(`updated ${e.target.name} with ${e.target.value}`);
 
-      this.updateButtonState();
+      this.buttonDisabled = !this.validate_form();
     }
   }
 
-  validate() {
+  validate_form() {
     return (
-      this.errors.length === 0 &&
+      this.errors?.length === 0 &&
       this.input.averageWinrate > 0 &&
       this.input.battles > 0 &&
       this.input.targetPercentage > 0 &&
       this.input.wins > 0 &&
       this.input.wins / this.input.battles <
         this.input.targetPercentage / 100 &&
-      this.input.targetPercentage <= this.input.averageWinrate
+      this.input.targetPercentage < this.input.averageWinrate &&
+      this.input.targetPercentage !== 100
     );
-  }
-
-  async updateButtonState() {
-    this.buttonDisabled = !this.validate();
   }
 }

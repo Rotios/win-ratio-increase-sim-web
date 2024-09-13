@@ -32,15 +32,13 @@ export class SummaryView extends LitElement {
       <vaadin-horizontal-layout theme="spacing padding">
         <vaadin-text-field
           label="New Average Win Rate"
-          .value=${((response.mode.wins / response.mode.battles) * 100).toFixed(
-            2,
-          )}
+          .value=${response.newAverageWinrate}
           readOnly="true"
         ></vaadin-text-field>
 
         <vaadin-text-field
           label="Average Battles Required"
-          .value=${response.mode.battles}
+          .value=${response.averageBattlesRequired}
           readOnly="true"
         ></vaadin-text-field>
       </vaadin-horizontal-layout>
@@ -48,13 +46,13 @@ export class SummaryView extends LitElement {
       <vaadin-horizontal-layout theme="spacing padding">
         <vaadin-text-field
           label="Average Wins"
-          .value=${response.mode.wins}
+          .value=${response.averageWins}
           readOnly="true"
         ></vaadin-text-field>
 
         <vaadin-text-field
           label="Average Losses"
-          .value=${response.mode.losses}
+          .value=${response.averageLosses}
           readOnly="true"
         ></vaadin-text-field>
       </vaadin-horizontal-layout>

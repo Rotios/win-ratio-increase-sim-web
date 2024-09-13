@@ -33,7 +33,6 @@ export default {
     }),    
     /** Bundle assets references via import.meta.url */
     importMetaAssets(),
-
     /** Minify html and css tagged template literals */
     babel({
       plugins: [

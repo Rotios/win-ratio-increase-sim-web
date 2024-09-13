@@ -64,23 +64,6 @@ function mean(array: number[]) {
   return array.reduce((acc, v) => acc + v, 0) / array.length;
 }
 
-function findMode(newStats: OriginalStats[]) {
-  const mp = {} as any;
-  let mx = 0;
-  let md = newStats[0];
-  for (const stat of newStats) {
-    const curNum = mp[stat.battles];
-    mp[stat.battles] = curNum ? 1 : curNum + 1;
-    const updatedNum = mp[stat.battles];
-    if (updatedNum > mx) {
-      mx = updatedNum;
-      md = stat;
-    }
-  }
-
-  return md;
-}
-
 export async function handleEvent(event: SimulationInput) {
   const t0 = Date.now();
 
@@ -116,7 +99,7 @@ export async function handleEvent(event: SimulationInput) {
     .map(stat => stat.battlesSimulated)
     .filter(stat => !!stat);
 
-  const averageBattlesRequired = mean(numDiffBattles);
+  const averageBattlesRequired = Math.round(mean(numDiffBattles));
 
   const maxBattlesRequired = Math.max(...numDiffBattles);
 
@@ -126,18 +109,19 @@ export async function handleEvent(event: SimulationInput) {
 
   const averageSimTime = mean(simTimes);
 
-  const averageLosses = mean(statistics.map(stat => stat.newStats.losses));
+  const averageLosses = Math.round(
+    mean(statistics.map(stat => stat.newStats.losses)),
+  );
 
-  const averageWins = mean(statistics.map(stat => stat.newStats.wins));
-
-  const mode = findMode(statistics.map(stat => stat.newStats));
+  const averageWins = Math.round(
+    mean(statistics.map(stat => stat.newStats.wins)),
+  );
 
   return {
     totalTime: Date.now() - t0,
     averageSimTime,
     averageLosses,
     averageWins,
-    mode,
     newAverageWinrate: mean(
       statistics.map(stat => Number(stat.percent)),
     ).toFixed(2),
