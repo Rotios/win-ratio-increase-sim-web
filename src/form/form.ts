@@ -60,7 +60,6 @@ export class WinRatioForm extends LitElement {
         ></vaadin-integer-field>
         <vaadin-number-field
           label="Overall Win Rate"
-          name="average_winrate"
           .value=${((this.input.wins / this.input.battles) * 100).toFixed(2)}
           min="0"
           readOnly="true"
@@ -69,7 +68,7 @@ export class WinRatioForm extends LitElement {
         ></vaadin-number-field>
         <vaadin-number-field
           label="Recent Average Win Rate"
-          name="average_winrate"
+          name="averageWinrate"
           .value=${this.input.averageWinrate}
           min=${((this.input.wins / this.input.battles) * 100).toFixed(2)}
           required
@@ -81,7 +80,7 @@ export class WinRatioForm extends LitElement {
         ></vaadin-number-field>
         <vaadin-number-field
           label="Target Win Rate"
-          name="target_percentage"
+          name="targetPercentage"
           min=${((this.input.wins / this.input.battles) * 100).toFixed(2)}
           max=${this.input.averageWinrate > 0 ? this.input.averageWinrate : 0}
           .value=${this.input.targetPercentage}
@@ -96,7 +95,7 @@ export class WinRatioForm extends LitElement {
 
         <vaadin-button
           theme="primary"
-          @click=${this.dispatch_input_event}
+          @click=${this.dispatchInputEvent}
           ?disabled=${this.buttonDisabled}
           >Simulate!
         </vaadin-button>
@@ -107,7 +106,7 @@ export class WinRatioForm extends LitElement {
     `;
   }
 
-  async dispatch_input_event() {
+  async dispatchInputEvent() {
     const validation = await this.validate();
     if (!validation) {
       return;

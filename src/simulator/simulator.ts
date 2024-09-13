@@ -11,7 +11,6 @@ async function simulate(
   originalStats: OriginalStats,
   options: Options,
 ) {
-  console.log(`Starting sim ${simulationId}`);
   const startTime = Date.now();
 
   let { wins, losses, battles } = originalStats;
@@ -33,7 +32,6 @@ async function simulate(
     percent = wins / battles;
   }
 
-  console.log(`Ending sim ${simulationId}`);
   return {
     originalStats,
     newStats: {
@@ -56,8 +54,6 @@ async function runThreads(
 ) {
   const threads = [];
   for (let i = 0; i < numSimulations; i += 1) {
-    console.log(`Starting thread ${i} of ${numSimulations} threads.`);
-
     threads.push(simulate(i, originalStats, options));
   }
 
