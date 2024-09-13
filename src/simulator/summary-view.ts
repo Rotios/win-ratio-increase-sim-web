@@ -31,6 +31,14 @@ export class SummaryView extends LitElement {
     return html`
       <vaadin-horizontal-layout theme="spacing padding">
         <vaadin-text-field
+          label="Expected Battles Required"
+          .value=${response.expectedBattlesRequired}
+          readOnly="true"
+        ></vaadin-text-field>
+      </vaadin-horizontal-layout>
+
+      <vaadin-horizontal-layout theme="spacing padding">
+        <vaadin-text-field
           label="New Average Win Rate"
           .value=${response.newAverageWinrate}
           readOnly="true"

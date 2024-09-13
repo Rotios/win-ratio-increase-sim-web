@@ -41,5 +41,6 @@ export interface FullSimulationResult {
   originalInformation: OriginalStats;
   numSimulations: number;
   maxAllowedBattles: number;
+  expectedBattlesRequired: number;
   statistics: SingleSimulationResult[];
 }

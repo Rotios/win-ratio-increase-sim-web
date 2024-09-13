@@ -60,6 +60,26 @@ async function runThreads(
   return Promise.all(threads);
 }
 
+function calculateExpectedAverage(
+  originalStats: OriginalStats,
+  options: Options,
+) {
+  const { wins, losses } = originalStats;
+
+  const { averageWinrate, targetPercentage } = options;
+
+  const averageWinLossRatio = averageWinrate / (100 - averageWinrate);
+  const targetWinLossRatio = targetPercentage / (100 - targetPercentage);
+
+  let result = targetWinLossRatio * losses - wins;
+  result /= averageWinLossRatio - targetWinLossRatio;
+  result *= averageWinLossRatio;
+
+  console.log(`Expected Matches ${result}`);
+
+  return Math.round(result);
+}
+
 function mean(array: number[]) {
   return array.reduce((acc, v) => acc + v, 0) / array.length;
 }
@@ -117,6 +137,11 @@ export async function handleEvent(event: SimulationInput) {
     mean(statistics.map(stat => stat.newStats.wins)),
   );
 
+  const expectedBattlesRequired = calculateExpectedAverage(
+    originalStats,
+    options,
+  );
+
   return {
     totalTime: Date.now() - t0,
     averageSimTime,
@@ -130,6 +155,7 @@ export async function handleEvent(event: SimulationInput) {
     minBattlesRequired,
     originalInformation: originalStats,
     numSimulations,
+    expectedBattlesRequired,
     maxAllowedBattles: maxSimulatedBattles,
     statistics,
   } as FullSimulationResult;
