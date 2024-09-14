@@ -61,11 +61,8 @@ export class WinRatioForm extends LitElement {
 
         <vaadin-number-field
           label="Current K/D Ratio"
-          name="currentKDRatio"
           .value=${currentKDPercentStr}
-          prevent-invalid-input
-          step="0.00001"
-          error-message="Value must be within 5 decimal places."
+          readOnly="true"
         ></vaadin-number-field>
 
         <vaadin-number-field
@@ -159,17 +156,6 @@ export class WinRatioForm extends LitElement {
     if (this.errors.length > 0) {
       this.buttonDisabled = true;
       return;
-    }
-
-    if (e.target.name === 'currentKDRatio') {
-      const ratio = parseFloat(e.target.value);
-      const kills = ratio * 100000;
-      const deaths = kills / ratio;
-      this.input = {
-        ...this.input,
-        kills,
-        deaths,
-      };
     }
 
     if (e.target.name) {
