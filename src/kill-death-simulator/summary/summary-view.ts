@@ -39,12 +39,12 @@ export class SummaryView extends LitElement {
 
       <vaadin-horizontal-layout theme="spacing padding">
         <vaadin-text-field
-          label="Expected Battles Required"
+          label="Expected Gunfights Fought"
           .value=${response.expectedBattlesRequired}
           readOnly="true"
         ></vaadin-text-field>
         <vaadin-text-field
-          label="Average Battles Required"
+          label="Average Gunfights Fought"
           .value=${response.averageBattlesRequired}
           readOnly="true"
         ></vaadin-text-field>
@@ -80,13 +80,13 @@ export class SummaryView extends LitElement {
 
       <vaadin-horizontal-layout theme="spacing padding">
         <vaadin-text-field
-          label="Min Battles Required"
+          label="Min Gunfights Required"
           .value=${response.minBattlesRequired}
           readOnly="true"
         ></vaadin-text-field>
 
         <vaadin-text-field
-          label="Max Battles Required"
+          label="Max Gunfights Required"
           .value=${response.maxBattlesRequired}
           readOnly="true"
         ></vaadin-text-field>
@@ -108,7 +108,7 @@ export class SummaryView extends LitElement {
       <vaadin-grid .items=${statistics}>
         <vaadin-grid-column
           path="battlesSimulated"
-          header="Battles Simulated"
+          header="Gunfights Simulated"
         ></vaadin-grid-column>
         <vaadin-grid-column
           path="newStats.kills"
