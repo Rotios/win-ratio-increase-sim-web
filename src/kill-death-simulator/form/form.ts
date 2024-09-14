@@ -177,6 +177,8 @@ export class WinRatioForm extends LitElement {
       this.input.targetKDRatio > 0 &&
       this.input.kills > 0 &&
       this.input.deaths > 0 &&
+      this.input.averageKillsPerMatch > 0 &&
+      this.input.averageKillsPerMatch >= this.input.averageKDRatio &&
       this.input.kills / this.input.deaths < this.input.targetKDRatio &&
       this.input.targetKDRatio < this.input.averageKDRatio
     );
