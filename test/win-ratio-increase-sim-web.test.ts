@@ -1,13 +1,15 @@
 import { html } from 'lit';
 import { fixture, expect } from '@open-wc/testing';
 
-import type { WinRatioIncreaseSimWeb } from '../src/win-ratio-increase-sim-web.js';
-import '../src/win-ratio-increase-sim-web.js';
+import type { WinRatioIncreaseSimWeb } from '../src/win-rate-simulator/win-ratio-increase-sim-web.js';
+import '../src/win-rate-simulator/win-ratio-increase-sim-web.js';
 
 describe('WinRatioIncreaseSimWeb', () => {
   let element: WinRatioIncreaseSimWeb;
   beforeEach(async () => {
-    element = await fixture(html`<win-ratio-increase-sim-web></win-ratio-increase-sim-web>`);
+    element = await fixture(
+      html`<win-ratio-increase-sim-web></win-ratio-increase-sim-web>`,
+    );
   });
 
   it('renders a h1', () => {

@@ -12,10 +12,10 @@ import '@vaadin/text-field/theme/lumo/vaadin-text-field.js';
 import { until } from 'lit/directives/until.js';
 
 import { STYLES } from './summary.style.js';
-import { handleEvent } from './simulator.js';
-import { SimulationInput } from '../models/simulator.models.js';
+import { handleEvent } from '../simulator/simulator.js';
+import { SimulationInput } from '../models/kd-simulator.models.js';
 
-@customElement('summary-view')
+@customElement('kd-summary-view')
 export class SummaryView extends LitElement {
   static styles = STYLES;
 
@@ -31,19 +31,18 @@ export class SummaryView extends LitElement {
     return html`
       <vaadin-horizontal-layout theme="spacing padding">
         <vaadin-text-field
-          label="Expected Battles Required"
-          .value=${response.expectedBattlesRequired}
+          label="New Average K/D Ratio"
+          .value=${response.newAverageKDRatio}
           readOnly="true"
         ></vaadin-text-field>
       </vaadin-horizontal-layout>
 
       <vaadin-horizontal-layout theme="spacing padding">
         <vaadin-text-field
-          label="New Average Win Rate"
-          .value=${response.newAverageWinrate}
+          label="Expected Battles Required"
+          .value=${response.expectedBattlesRequired}
           readOnly="true"
         ></vaadin-text-field>
-
         <vaadin-text-field
           label="Average Battles Required"
           .value=${response.averageBattlesRequired}
@@ -53,14 +52,28 @@ export class SummaryView extends LitElement {
 
       <vaadin-horizontal-layout theme="spacing padding">
         <vaadin-text-field
-          label="Average Wins"
-          .value=${response.averageWins}
+          label="Expected Matches Required"
+          .value=${response.expectedBattlesRequired /
+          response.originalInformation.averageKillsPerMatch}
+          readOnly="true"
+        ></vaadin-text-field>
+        <vaadin-text-field
+          label="Average Matches Required"
+          .value=${response.averageMatchesRequired}
+          readOnly="true"
+        ></vaadin-text-field>
+      </vaadin-horizontal-layout>
+
+      <vaadin-horizontal-layout theme="spacing padding">
+        <vaadin-text-field
+          label="Average Kills"
+          .value=${response.averageKills}
           readOnly="true"
         ></vaadin-text-field>
 
         <vaadin-text-field
-          label="Average Losses"
-          .value=${response.averageLosses}
+          label="Average Deaths"
+          .value=${response.averageDeaths}
           readOnly="true"
         ></vaadin-text-field>
       </vaadin-horizontal-layout>
@@ -78,6 +91,19 @@ export class SummaryView extends LitElement {
           readOnly="true"
         ></vaadin-text-field>
       </vaadin-horizontal-layout>
+      <vaadin-horizontal-layout theme="spacing padding">
+        <vaadin-text-field
+          label="Min Matches Required"
+          .value=${response.minMatchesRequired}
+          readOnly="true"
+        ></vaadin-text-field>
+
+        <vaadin-text-field
+          label="Max Matches Required"
+          .value=${response.maxMatchesRequired}
+          readOnly="true"
+        ></vaadin-text-field>
+      </vaadin-horizontal-layout>
 
       <vaadin-grid .items=${statistics}>
         <vaadin-grid-column
@@ -85,20 +111,20 @@ export class SummaryView extends LitElement {
           header="Battles Simulated"
         ></vaadin-grid-column>
         <vaadin-grid-column
-          path="newStats.wins"
-          header="Wins"
+          path="newStats.kills"
+          header="Kills"
         ></vaadin-grid-column>
         <vaadin-grid-column
-          path="newStats.losses"
-          header="Losses"
+          path="newStats.deaths"
+          header="Deaths"
         ></vaadin-grid-column>
         <vaadin-grid-column
-          path="newStats.battles"
-          header="Battles"
+          path="totalMatches"
+          header="Matches"
         ></vaadin-grid-column>
         <vaadin-grid-column
-          path="percent"
-          header="New Avg WR"
+          path="newKDRatio"
+          header="New Avg K/D"
         ></vaadin-grid-column>
       </vaadin-grid>
     `;
