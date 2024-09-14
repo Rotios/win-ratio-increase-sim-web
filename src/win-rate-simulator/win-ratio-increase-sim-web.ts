@@ -1,12 +1,11 @@
-import { LitElement, html } from 'lit';
+import { LitElement, html, css } from 'lit';
 import { property, customElement } from 'lit/decorators.js';
-import { STYLES } from './styles.js';
 import './form/form.js';
-import './simulator/summary-view.js';
+import './summary/summary-view.js';
 
 @customElement('win-ratio-increase-sim-web')
 export class WinRatioIncreaseSimWeb extends LitElement {
-  static styles = STYLES;
+  static styles = css``;
 
   @property({ type: String }) header = 'Win Rate Increase Simulator';
 
@@ -14,20 +13,18 @@ export class WinRatioIncreaseSimWeb extends LitElement {
 
   render() {
     return html`
-      <main>
-        <h1>${this.header}</h1>
+      <h1>${this.header}</h1>
 
-        <p>
-          Determine how quickly you can increase your Win Rate using this
-          simulator.
-        </p>
-        <win-ratio-form
-          @simulation_inputs=${this._simulate_input}
-          @reset_inputs=${this._reset_input}
-        ></win-ratio-form>
+      <p>
+        Determine how quickly you can increase your win rate using this
+        simulator.
+      </p>
+      <win-ratio-form
+        @simulation_inputs=${this._simulate_input}
+        @reset_inputs=${this._reset_input}
+      ></win-ratio-form>
 
-        <summary-view .input=${this.input}></summary-view>
-      </main>
+      <summary-view .input=${this.input}></summary-view>
     `;
   }
 
