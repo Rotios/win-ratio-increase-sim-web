@@ -29,10 +29,7 @@ export class WinRatioForm extends LitElement {
 
   render() {
     if (this.hideForm) {
-      return html` <vaadin-button
-        theme="primary"
-        @click=${this.reset}
-        ?disabled=${this.buttonDisabled}
+      return html` <vaadin-button theme="primary" @click=${this.reset}
         >New Simulation?
       </vaadin-button>`;
     }
@@ -106,14 +103,16 @@ export class WinRatioForm extends LitElement {
       return;
     }
 
+    this.hideForm = true;
+
+    this.buttonDisabled = true;
+
     this.dispatchEvent(
       new CustomEvent('simulation_inputs', {
         detail: this.input,
         bubbles: true,
       }),
     );
-
-    this.hideForm = true;
   }
 
   reset() {
@@ -126,6 +125,13 @@ export class WinRatioForm extends LitElement {
     this.errors = [];
     this.buttonDisabled = true;
     this.hideForm = false;
+
+    this.dispatchEvent(
+      new CustomEvent('reset_inputs', {
+        detail: null,
+        bubbles: true,
+      }),
+    );
   }
 
   async formValueUpdated(e: { target: HTMLInputElement }) {

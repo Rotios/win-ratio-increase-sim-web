@@ -105,7 +105,7 @@ export class SummaryView extends LitElement {
   }
 
   protected render() {
-    if (this.input === undefined) {
+    if (!this.input) {
       return html``;
     }
     return until(this.getResults(), html`Loading...`);

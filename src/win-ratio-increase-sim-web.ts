@@ -23,11 +23,16 @@ export class WinRatioIncreaseSimWeb extends LitElement {
         </p>
         <win-ratio-form
           @simulation_inputs=${this._simulate_input}
+          @reset_inputs=${this._reset_input}
         ></win-ratio-form>
 
         <summary-view .input=${this.input}></summary-view>
       </main>
     `;
+  }
+
+  private _reset_input(e: CustomEvent) {
+    this.input = e.detail;
   }
 
   private _simulate_input(e: CustomEvent) {
