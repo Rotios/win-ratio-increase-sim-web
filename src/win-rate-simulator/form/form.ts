@@ -66,18 +66,18 @@ export class WinRatioForm extends LitElement {
         <vaadin-number-field
           label="Recent Average Win Rate"
           name="averageWinrate"
-          min=${currentWinRate + stepNumber}
+          min=${(currentWinRate + stepNumber).toFixed(2)}
           max="100"
           .value=${averageWinrate}
           step=${stepNumber}
           required
-          error-message="Quantity must be in increments of 0.01 and greater than ${currentWinRateStr}"
+          error-message="Quantity must be in increments of 0.01 and greater than ${currentWinRate + stepNumber}"
         ></vaadin-number-field>
         <vaadin-number-field
           label="Target Win Rate"
           name="targetPercentage"
-          min=${currentWinRate + stepNumber}
-          max=${averageWinrate > 0 ? averageWinrate - stepNumber : 0}
+          min=${(currentWinRate + stepNumber).toFixed(2)}
+          max=${averageWinrate > 0 ? (averageWinrate - stepNumber).toFixed(2) : 0}
           .value=${targetPercentage}
           step=${stepNumber}
           required
