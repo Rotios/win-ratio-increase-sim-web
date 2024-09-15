@@ -93,10 +93,6 @@ export class SummaryView extends LitElement {
           header="Losses Simulated"
         ></vaadin-grid-sort-column>
         <vaadin-grid-sort-column
-          path="sessionStats.battles"
-          header="Battles Simulated"
-        ></vaadin-grid-sort-column>
-        <vaadin-grid-sort-column
           path="newStats.wins"
           header="Account Wins"
         ></vaadin-grid-sort-column>
