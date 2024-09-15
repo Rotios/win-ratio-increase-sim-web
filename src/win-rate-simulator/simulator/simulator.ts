@@ -76,13 +76,15 @@ function calculateExpectedAverage(
   const averageWinLossRatio = averageWinrate / (100 - averageWinrate);
   const targetWinLossRatio = targetPercentage / (100 - targetPercentage);
 
-  let result = targetWinLossRatio * losses - wins;
-  result /= averageWinLossRatio - targetWinLossRatio;
-  result *= averageWinLossRatio;
+  let winsRequired = targetWinLossRatio * losses - wins;
+  winsRequired /= averageWinLossRatio - targetWinLossRatio;
+  winsRequired *= averageWinLossRatio;
 
-  console.log(`Expected Matches ${result}`);
+  const totalBattles = Math.round((winsRequired / (averageWinrate/100)) + 0.5);
 
-  return Math.round(result);
+  console.log(`Expected Matches ${totalBattles}`);
+
+  return Math.round(totalBattles);
 }
 
 function mean(array: number[]) {
