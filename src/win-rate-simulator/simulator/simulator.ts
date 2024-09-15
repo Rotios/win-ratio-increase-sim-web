@@ -43,7 +43,7 @@ async function simulate(
     sessionStats: {
       wins: wins - originalStats.wins,
       losses: losses - originalStats.losses,
-      battles: battles - originalStats.battles
+      battles: battleDiff
     },
     battlesSimulated: battleDiff,
     percent: (percent * 100)?.toFixed(2),
