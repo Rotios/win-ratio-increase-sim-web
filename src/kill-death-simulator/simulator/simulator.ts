@@ -53,15 +53,27 @@ async function simulate(
     kdRatio = kills / deaths;
   }
 
+  const simulationKills = kills - originalStats.kills;
+  const simulationDeaths = deaths - originalStats.deaths;
+  const simulationMatches = Math.round((simulationKills / averageKillsPerMatch) + 0.5);
+
   return {
     originalStats,
     newStats: {
       kills,
       deaths,
       kdRatio: kills / deaths,
+      averageKillsPerMatch: kills/originalStats.averageKillsPerMatch
+    },
+    sessionStats: {
+      kills: simulationKills,
+      deaths: simulationDeaths,
+      kdRatio: simulationKills / simulationDeaths,
+      matches: simulationMatches,
+      averageKillsPerMatch:  simulationKills/simulationMatches
     },
     battlesSimulated: numChallenges,
-    totalMatches: Math.round(numChallenges / averageKillsPerMatch + 0.5),
+    totalMatches: Math.round((kills/averageKillsPerMatch) + 0.5),
     newKDRatio: (kills / deaths).toFixed(5),
     simulationNumber: simulationId,
     totalTime: Date.now() - startTime,
@@ -92,7 +104,7 @@ function calculateExpectedAverage(
   result /= averageKDRatio - targetKDRatio;
   result *= averageKDRatio;
 
-  console.log(`Expected Matches ${result}`);
+  console.log(`Expected Gunfights ${result}`);
 
   return Math.round(result);
 }
@@ -133,8 +145,8 @@ export async function handleEvent(event: SimulationInput) {
     .filter(stat => !!stat);
 
   const numMatchesArr = statistics
-    .map(stat => stat.totalMatches)
-    .filter(stat => !!stat);
+    .map(stat => stat.sessionStats.matches)
+    .filter(matches => matches !== undefined);
 
   const averageBattlesRequired = Math.round(mean(numDiffBattles));
 

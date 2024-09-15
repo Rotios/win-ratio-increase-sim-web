@@ -80,26 +80,38 @@ export class SummaryView extends LitElement {
       </vaadin-horizontal-layout>
 
       <vaadin-grid .items=${statistics}>
-        <vaadin-grid-column
+        <vaadin-grid-sort-column
           path="battlesSimulated"
           header="Battles Simulated"
-        ></vaadin-grid-column>
-        <vaadin-grid-column
+        ></vaadin-grid-sort-column>
+        <vaadin-grid-sort-column
+          path="sessionStats.wins"
+          header="Wins Simulated"
+        ></vaadin-grid-sort-column>
+        <vaadin-grid-sort-column
+          path="sessionStats.losses"
+          header="Losses Simulated"
+        ></vaadin-grid-sort-column>
+        <vaadin-grid-sort-column
+          path="sessionStats.battles"
+          header="Battles Simulated"
+        ></vaadin-grid-sort-column>
+        <vaadin-grid-sort-column
           path="newStats.wins"
-          header="Wins"
-        ></vaadin-grid-column>
-        <vaadin-grid-column
+          header="Account Wins"
+        ></vaadin-grid-sort-column>
+        <vaadin-grid-sort-column
           path="newStats.losses"
-          header="Losses"
-        ></vaadin-grid-column>
-        <vaadin-grid-column
+          header="Account Losses"
+        ></vaadin-grid-sort-column>
+        <vaadin-grid-sort-column
           path="newStats.battles"
-          header="Battles"
-        ></vaadin-grid-column>
-        <vaadin-grid-column
+          header="Account Battles"
+        ></vaadin-grid-sort-column>
+        <vaadin-grid-sort-column
           path="percent"
           header="New Avg WR"
-        ></vaadin-grid-column>
+        ></vaadin-grid-sort-column>
       </vaadin-grid>
     `;
   }

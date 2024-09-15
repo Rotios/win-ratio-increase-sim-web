@@ -53,8 +53,8 @@ export class SummaryView extends LitElement {
       <vaadin-horizontal-layout theme="spacing padding">
         <vaadin-text-field
           label="Expected Matches Required"
-          .value=${response.expectedBattlesRequired /
-          response.originalInformation.averageKillsPerMatch}
+          .value=${Math.round((response.expectedBattlesRequired /
+          response.originalInformation.averageKillsPerMatch) + 0.5)}
           readOnly="true"
         ></vaadin-text-field>
         <vaadin-text-field
@@ -106,26 +106,39 @@ export class SummaryView extends LitElement {
       </vaadin-horizontal-layout>
 
       <vaadin-grid .items=${statistics}>
-        <vaadin-grid-column
+        <vaadin-grid-sort-column
+          path="sessionStats.matches"
+          header="Simulated Matches"
+        ></vaadin-grid-sort-column>
+
+        <vaadin-grid-sort-column
           path="battlesSimulated"
-          header="Gunfights Simulated"
-        ></vaadin-grid-column>
-        <vaadin-grid-column
+          header="Simulated Gunfights"
+        ></vaadin-grid-sort-column>
+
+        <vaadin-grid-sort-column
+          path="sessionStats.kills"
+          header="Simulated Gunfight Kills"
+        ></vaadin-grid-sort-column>
+
+        <vaadin-grid-sort-column
+          path="sessionStats.deaths"
+          header="Simulated Gunfight Deaths"
+        ></vaadin-grid-sort-column>
+        
+        <vaadin-grid-sort-column
           path="newStats.kills"
-          header="Kills"
-        ></vaadin-grid-column>
-        <vaadin-grid-column
+          header="Total Account Kills"
+        ></vaadin-grid-sort-column>
+        <vaadin-grid-sort-column
           path="newStats.deaths"
-          header="Deaths"
-        ></vaadin-grid-column>
-        <vaadin-grid-column
-          path="totalMatches"
-          header="Matches"
-        ></vaadin-grid-column>
-        <vaadin-grid-column
+          header="Total Account Deaths"
+        ></vaadin-grid-sort-column>
+
+        <vaadin-grid-sort-column
           path="newKDRatio"
           header="New Avg K/D"
-        ></vaadin-grid-column>
+        ></vaadin-grid-sort-column>
       </vaadin-grid>
     `;
   }

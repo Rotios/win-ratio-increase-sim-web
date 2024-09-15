@@ -1,6 +1,6 @@
 export interface OriginalStats {
   wins: number;
-  ties: number;
+  ties?: number;
   losses: number;
   battles: number;
 }

@@ -68,7 +68,7 @@ export class WinRatioForm extends LitElement {
         <vaadin-number-field
           label="Recent Average K/D Ratio"
           name="averageKDRatio"
-          min=${currentKDPercent + stepNumber}
+          min=${(currentKDPercent + stepNumber).toFixed(5)}
           max="100"
           .value=${currentKDPercent
             ? (currentKDPercent + stepNumber).toFixed(5)
@@ -81,8 +81,8 @@ export class WinRatioForm extends LitElement {
         <vaadin-number-field
           label="Target K/D Ratio"
           name="targetKDRatio"
-          min=${currentKDPercent + stepNumber}
-          max=${averageKDRatio > 0 ? averageKDRatio - stepNumber : 0}
+          min=${(currentKDPercent + stepNumber).toFixed(5)}
+          max=${averageKDRatio > 0 ? (averageKDRatio - stepNumber).toFixed(5) : 0}
           .value=${targetKDRatio}
           step=${stepNumber}
           required

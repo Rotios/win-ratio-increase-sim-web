@@ -3,6 +3,7 @@ export interface OriginalStats {
   deaths: number;
   kdRatio: number;
   averageKillsPerMatch: number;
+  matches? : number;
 }
 
 export interface Options {
@@ -22,6 +23,7 @@ export interface SimulationInput {
 export interface SingleSimulationResult {
   originalStats: OriginalStats;
   newStats: OriginalStats;
+  sessionStats: OriginalStats;
   battlesSimulated: number;
   newKDRatio: string;
   simulationNumber: number;

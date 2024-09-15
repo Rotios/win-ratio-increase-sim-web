@@ -8,7 +8,8 @@ export const STYLES = [
       flex-direction: column;
       justify-content: flex-start;
       color: #1a2b42;
-      margin: 0 auto;
+      margin: 10px auto;
+      padding: 10px;
       text-align: center;
       background-color: var(--win-ratio-increase-sim-web-background-color);
     }

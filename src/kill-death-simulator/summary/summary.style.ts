@@ -15,6 +15,10 @@ export const STYLES = [
       background-color: var(--win-ratio-increase-sim-web-background-color);
     }
 
+    vaadin-grid::part(header-cell) {
+      white-space: normal;
+    }
+      
     main {
       flex-grow: 1;
     }
