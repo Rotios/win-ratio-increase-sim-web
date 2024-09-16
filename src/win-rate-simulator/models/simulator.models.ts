@@ -22,6 +22,7 @@ export interface SimulationInput {
 export interface SingleSimulationResult {
   originalStats: OriginalStats;
   newStats: OriginalStats;
+  sessionStats: OriginalStats;
   battlesSimulated: number;
   percent: string;
   simulationNumber: number;

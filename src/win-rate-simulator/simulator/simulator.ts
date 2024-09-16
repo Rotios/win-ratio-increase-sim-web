@@ -137,11 +137,11 @@ export async function handleEvent(event: SimulationInput) {
   const averageSimTime = mean(simTimes);
 
   const averageLosses = Math.round(
-    mean(statistics.map(stat => stat.newStats.losses)),
+    mean(statistics.map(stat => stat.sessionStats.losses)),
   );
 
   const averageWins = Math.round(
-    mean(statistics.map(stat => stat.newStats.wins)),
+    mean(statistics.map(stat => stat.sessionStats.wins)),
   );
 
   const expectedBattlesRequired = calculateExpectedAverage(

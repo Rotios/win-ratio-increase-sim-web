@@ -6,4 +6,5 @@ export interface ViewType {
 export const VIEW_TYPES: ViewType[] = [
   { id: 0, actionText: 'Win Rate' },
   { id: 1, actionText: 'K/D Ratio' },
+  { id: 2, actionText: 'FAQ' },
 ];

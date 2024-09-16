@@ -5,6 +5,7 @@ import type { TabsSelectedChangedEvent } from '@vaadin/tabs';
 import { STYLES } from './styles.js';
 import './win-rate-simulator/win-ratio-increase-sim-web.js';
 import './kill-death-simulator/kd-increase-sim.js';
+import './FAQ/faq.js'
 import { VIEW_TYPES, ViewType } from './app.models.js';
 import '@vaadin/tabs/theme/lumo/vaadin-tabs.js';
 
@@ -43,6 +44,8 @@ export class MainPage extends LitElement {
         return html`<win-ratio-increase-sim-web></win-ratio-increase-sim-web>`;
       case 1:
         return html`<kd-simulation-page></kd-simulation-page>`;
+      case 2:
+        return html`<faq-page></faq-page>`
       default:
         return html``;
     }
