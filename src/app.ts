@@ -44,8 +44,6 @@ export class MainPage extends LitElement {
         return html`<win-ratio-increase-sim-web></win-ratio-increase-sim-web>`;
       case 1:
         return html`<kd-simulation-page></kd-simulation-page>`;
-      case 2:
-        return html`<faq-page></faq-page>`
       default:
         return html``;
     }
