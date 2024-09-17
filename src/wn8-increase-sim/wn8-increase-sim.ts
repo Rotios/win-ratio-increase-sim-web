@@ -7,7 +7,7 @@ import './summary/summary-view.js';
 export class Wn8IncreaseSim extends LitElement {
   static styles = css``;
 
-  @property({ type: String }) header = 'Win Rate Increase Simulator';
+  @property({ type: String }) header = 'Average Score (WN8) Increase Simulator';
 
   @property() input = undefined;
 
