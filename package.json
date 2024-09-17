@@ -21,9 +21,11 @@
     "@vaadin/grid": "^24.4.8",
     "@vaadin/horizontal-layout": "^24.4.8",
     "@vaadin/integer-field": "^24.4.8",
+    "@vaadin/notification": "^24.4.9",
     "@vaadin/number-field": "^24.4.8",
     "@vaadin/tabs": "^24.4.8",
     "@vaadin/text-field": "^24.4.8",
+    "@vaadin/vertical-layout": "^24.4.8",
     "class-validator": "^0.14.1",
     "lit": "^3.1.4",
     "marked": "^14.1.2"

@@ -29,9 +29,14 @@ export class WinRatioForm extends LitElement {
 
   render() {
     if (this.hideForm) {
-      return html` <vaadin-button theme="primary" @click=${this.reset}
-        >New Simulation?
-      </vaadin-button>`;
+      return html` <vaadin-horizontal-layout theme="spacing padding">
+        <vaadin-button theme="primary" @click=${this.reset}
+          >New Simulation?
+        </vaadin-button>
+        <vaadin-button theme="primary" @click=${this.dispatchInputEvent}
+          >Rerun Simulation
+        </vaadin-button>
+      </vaadin-horizontal-layout>`;
     }
     const stepNumber = 0.01;
     const { wins, battles, averageWinrate, targetPercentage } = this.input;
@@ -71,13 +76,16 @@ export class WinRatioForm extends LitElement {
           .value=${averageWinrate}
           step=${stepNumber}
           required
-          error-message="Quantity must be in increments of 0.01 and greater than ${currentWinRate + stepNumber}"
+          error-message="Quantity must be in increments of 0.01 and greater than ${currentWinRate +
+          stepNumber}"
         ></vaadin-number-field>
         <vaadin-number-field
           label="Target Win Rate"
           name="targetPercentage"
           min=${(currentWinRate + stepNumber).toFixed(2)}
-          max=${averageWinrate > 0 ? (averageWinrate - stepNumber).toFixed(2) : 0}
+          max=${averageWinrate > 0
+            ? (averageWinrate - stepNumber).toFixed(2)
+            : 0}
           .value=${targetPercentage}
           step=${stepNumber}
           required
@@ -116,14 +124,7 @@ export class WinRatioForm extends LitElement {
   }
 
   reset() {
-    this.input = {
-      wins: 0,
-      battles: 0,
-      averageWinrate: 0,
-      targetPercentage: 0,
-    };
-    this.errors = [];
-    this.buttonDisabled = true;
+    this.buttonDisabled = false;
     this.hideForm = false;
 
     this.dispatchEvent(

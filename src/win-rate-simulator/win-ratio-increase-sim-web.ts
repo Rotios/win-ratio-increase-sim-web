@@ -28,12 +28,12 @@ export class WinRatioIncreaseSimWeb extends LitElement {
     `;
   }
 
-  private _reset_input(e: CustomEvent) {
-    this.input = e.detail;
+  private _reset_input() {
+    this.input = undefined;
   }
 
   private _simulate_input(e: CustomEvent) {
-    this.input = e.detail;
+    this.input = { ...e.detail };
     console.log(`input ${JSON.stringify(this.input)}`);
   }
 }

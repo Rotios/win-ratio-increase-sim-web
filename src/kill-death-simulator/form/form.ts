@@ -30,9 +30,14 @@ export class WinRatioForm extends LitElement {
 
   render() {
     if (this.hideForm) {
-      return html` <vaadin-button theme="primary" @click=${this.reset}
-        >New Simulation?
-      </vaadin-button>`;
+      return html`<vaadin-horizontal-layout theme="spacing padding">
+        <vaadin-button theme="primary" @click=${this.reset}
+          >New Simulation?
+        </vaadin-button>
+        <vaadin-button theme="primary" @click=${this.dispatchInputEvent}
+          >Rerun Simulation
+        </vaadin-button>
+      </vaadin-horizontal-layout>`;
     }
     const stepNumber = 0.00001;
     const { kills, deaths, targetKDRatio, averageKDRatio } = this.input;
@@ -82,7 +87,9 @@ export class WinRatioForm extends LitElement {
           label="Target K/D Ratio"
           name="targetKDRatio"
           min=${(currentKDPercent + stepNumber).toFixed(5)}
-          max=${averageKDRatio > 0 ? (averageKDRatio - stepNumber).toFixed(5) : 0}
+          max=${averageKDRatio > 0
+            ? (averageKDRatio - stepNumber).toFixed(5)
+            : 0}
           .value=${targetKDRatio}
           step=${stepNumber}
           required
@@ -93,7 +100,8 @@ export class WinRatioForm extends LitElement {
           label="Average Kills per Match"
           name="averageKillsPerMatch"
           min=${Math.round(averageKDRatio)}
-          .value="1"
+          .value=${this.input.averageKillsPerMatch ??
+          Math.round(averageKDRatio)}
           step="1"
           required
           error-message="Quantity must be a whole number and at least ${Math.round(
@@ -133,15 +141,7 @@ export class WinRatioForm extends LitElement {
   }
 
   reset() {
-    this.input = {
-      kills: 0,
-      deaths: 0,
-      targetKDRatio: 0,
-      averageKDRatio: 0,
-      averageKillsPerMatch: 0,
-    };
-    this.errors = [];
-    this.buttonDisabled = true;
+    this.buttonDisabled = false;
     this.hideForm = false;
 
     this.dispatchEvent(
