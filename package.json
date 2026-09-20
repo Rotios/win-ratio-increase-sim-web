@@ -26,9 +26,7 @@
     "@vaadin/tabs": "^24.4.8",
     "@vaadin/text-field": "^24.4.8",
     "@vaadin/vertical-layout": "^24.4.8",
-    "class-validator": "^0.14.1",
-    "lit": "^3.1.4",
-    "marked": "^14.1.2"
+    "lit": "^3.1.4"
   },
   "devDependencies": {
     "@custom-elements-manifest/analyzer": "^0.10.3",
@@ -45,7 +43,6 @@
     "@web/test-runner": "^0.18.2",
     "babel-plugin-template-html-minifier": "^4.1.0",
     "concurrently": "^8.2.2",
-    "deepmerge": "^4.3.1",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "husky": "^9.0.11",

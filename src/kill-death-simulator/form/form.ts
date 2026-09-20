@@ -164,8 +164,6 @@ export class WinRatioForm extends LitElement {
         [e.target.name]: parseFloat(e.target.value),
       };
 
-      console.log(`updated ${e.target.name} with ${e.target.value}`);
-
       this.buttonDisabled = !this.validate_form();
     }
   }

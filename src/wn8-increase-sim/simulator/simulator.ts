@@ -5,6 +5,11 @@ import {
   SimulationInput,
   SingleSimulationResult,
 } from '../models/simulator.models.js';
+import {
+  aggregateBattleCounts,
+  mean,
+  runSimulations,
+} from '../../shared/simulation-utils.js';
 
 async function simulate(
   simulationId: number,
@@ -52,7 +57,7 @@ async function simulate(
     lowestWn8: Math.round(sessionStats.lowestWn8),
     highestWn8: Math.round(sessionStats.highestWn8),
     currentWn8: Math.round(sessionStats.currentWn8),
-    averageWn8: Math.round(sessionStats.lowestWn8),
+    averageWn8: Math.round(sessionStats.currentWn8),
   };
 
   return {
@@ -71,19 +76,6 @@ async function simulate(
   } as SingleSimulationResult;
 }
 
-async function runThreads(
-  numSimulations: number,
-  originalStats: OriginalStats,
-  options: Options,
-) {
-  const threads = [];
-  for (let i = 0; i < numSimulations; i += 1) {
-    threads.push(simulate(i, originalStats, options));
-  }
-
-  return Promise.all(threads);
-}
-
 export function calculateExpectedAverage(originalStats: OriginalStats) {
   // Formula is x = battles * (targetWn8 - currentWn8) / (newAverageWn8 - targetWn8)
   const { lowestWn8, highestWn8, battles, targetWn8, currentWn8 } =
@@ -94,10 +86,6 @@ export function calculateExpectedAverage(originalStats: OriginalStats) {
   return Math.round(
     (battles * (targetWn8 - currentWn8)) / (averageWn8 - targetWn8) + 0.5,
   );
-}
-
-function mean(array: number[]) {
-  return array.reduce((acc, v) => acc + v, 0) / array.length;
 }
 
 export async function handleEvent(event: SimulationInput) {
@@ -139,20 +127,13 @@ export async function handleEvent(event: SimulationInput) {
       message: 'The number of expected battles is too high to simulate.',
     });
   } else {
-    console.log(`Starting a total of ${numSimulations} threads.`);
-    statistics = await runThreads(numSimulations, originalStats, options);
-    console.log(`Finished waiting on a total of ${numSimulations} threads.`);
+    statistics = await runSimulations(numSimulations, id =>
+      simulate(id, originalStats, options),
+    );
   }
 
-  const numDiffBattles = statistics
-    .map(stat => stat.battlesSimulated)
-    .filter(stat => !!stat);
-
-  const averageBattlesRequired = Math.round(mean(numDiffBattles));
-
-  const maxBattlesRequired = Math.max(...numDiffBattles);
-
-  const minBattlesRequired = Math.min(...numDiffBattles);
+  const { averageBattlesRequired, maxBattlesRequired, minBattlesRequired } =
+    aggregateBattleCounts(statistics.map(stat => stat.battlesSimulated));
 
   const simTimes = statistics.map(stat => stat.totalTime);
 
@@ -172,12 +153,3 @@ export async function handleEvent(event: SimulationInput) {
     errors,
   } as FullSimulationResult;
 }
-
-// handle_event({
-//     wins: 10260,
-//     battles: 20230,
-//     average_winrate: 70,
-//     target_percentage: 60
-// }).then(data => {
-//     console.log(data)
-// })

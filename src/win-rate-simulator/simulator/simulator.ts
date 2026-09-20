@@ -5,6 +5,11 @@ import {
   SimulationInput,
   SingleSimulationResult,
 } from '../models/simulator.models.js';
+import {
+  aggregateBattleCounts,
+  mean,
+  runSimulations,
+} from '../../shared/simulation-utils.js';
 
 async function simulate(
   simulationId: number,
@@ -43,26 +48,13 @@ async function simulate(
     sessionStats: {
       wins: wins - originalStats.wins,
       losses: losses - originalStats.losses,
-      battles: battleDiff
+      battles: battleDiff,
     },
     battlesSimulated: battleDiff,
     percent: (percent * 100)?.toFixed(2),
     simulationNumber: simulationId,
     totalTime: Date.now() - startTime,
   } as SingleSimulationResult;
-}
-
-async function runThreads(
-  numSimulations: number,
-  originalStats: OriginalStats,
-  options: Options,
-) {
-  const threads = [];
-  for (let i = 0; i < numSimulations; i += 1) {
-    threads.push(simulate(i, originalStats, options));
-  }
-
-  return Promise.all(threads);
 }
 
 function calculateExpectedAverage(
@@ -80,15 +72,9 @@ function calculateExpectedAverage(
   winsRequired /= averageWinLossRatio - targetWinLossRatio;
   winsRequired *= averageWinLossRatio;
 
-  const totalBattles = Math.round((winsRequired / (averageWinrate/100)) + 0.5);
-
-  console.log(`Expected Matches ${totalBattles}`);
+  const totalBattles = Math.round(winsRequired / (averageWinrate / 100) + 0.5);
 
   return Math.round(totalBattles);
-}
-
-function mean(array: number[]) {
-  return array.reduce((acc, v) => acc + v, 0) / array.length;
 }
 
 export async function handleEvent(event: SimulationInput) {
@@ -118,19 +104,12 @@ export async function handleEvent(event: SimulationInput) {
     battles,
   } as OriginalStats;
 
-  console.log(`Starting a total of ${numSimulations} threads.`);
-  const statistics = await runThreads(numSimulations, originalStats, options);
-  console.log(`Finished waiting on a total of ${numSimulations} threads.`);
+  const statistics = await runSimulations(numSimulations, id =>
+    simulate(id, originalStats, options),
+  );
 
-  const numDiffBattles = statistics
-    .map(stat => stat.battlesSimulated)
-    .filter(stat => !!stat);
-
-  const averageBattlesRequired = Math.round(mean(numDiffBattles));
-
-  const maxBattlesRequired = Math.max(...numDiffBattles);
-
-  const minBattlesRequired = Math.min(...numDiffBattles);
+  const { averageBattlesRequired, maxBattlesRequired, minBattlesRequired } =
+    aggregateBattleCounts(statistics.map(stat => stat.battlesSimulated));
 
   const simTimes = statistics.map(stat => stat.totalTime);
 
@@ -167,12 +146,3 @@ export async function handleEvent(event: SimulationInput) {
     statistics,
   } as FullSimulationResult;
 }
-
-// handle_event({
-//     wins: 10260,
-//     battles: 20230,
-//     average_winrate: 70,
-//     target_percentage: 60
-// }).then(data => {
-//     console.log(data)
-// })

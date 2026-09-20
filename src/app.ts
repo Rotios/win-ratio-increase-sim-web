@@ -13,7 +13,6 @@ export class MainPage extends LitElement {
   @property() componentInView: ViewType = {} as ViewType;
 
   render() {
-    console.log(this.componentInView);
     return html`
       <main>
         <header>
