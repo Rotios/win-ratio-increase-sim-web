@@ -34,6 +34,5 @@ export class SimulationPage extends LitElement {
 
   private _simulate_input(e: CustomEvent) {
     this.input = { ...e.detail };
-    console.log(`input ${JSON.stringify(this.input)}`);
   }
 }

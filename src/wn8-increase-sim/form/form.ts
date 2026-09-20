@@ -132,7 +132,6 @@ export class WN8AverageForm extends LitElement {
   }
 
   async dispatchInputEvent() {
-    console.log('Dispatch');
     const validation = this.validate_form();
     if (!validation) {
       return;
@@ -177,8 +176,6 @@ export class WN8AverageForm extends LitElement {
         (this.input.highestWn8 + this.input.lowestWn8) / 2 - 0.5,
       );
 
-      console.log(`updated ${e.target.name} with ${e.target.value}`);
-
       this.buttonDisabled = !this.validate_form();
     }
   }
@@ -188,8 +185,8 @@ export class WN8AverageForm extends LitElement {
       this.errors?.length === 0 &&
       !Object.values(this.input).filter(input => !input)?.length &&
       this.input.lowestWn8 < this.input.highestWn8 &&
-      this.input.averageWn8 !== this.input.targetWn8 &&
-      this.input.currentWn8 !== this.input.targetWn8
+      this.input.currentWn8 < this.input.targetWn8 &&
+      this.input.targetWn8 < (this.input.averageWn8 ?? 0)
     );
   }
 }

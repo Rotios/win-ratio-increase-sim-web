@@ -43,6 +43,5 @@ export class Wn8IncreaseSim extends LitElement {
 
   private _simulate_input(e: CustomEvent) {
     this.input = { ...e.detail };
-    console.log(`Received input ${JSON.stringify(this.input)}`);
   }
 }

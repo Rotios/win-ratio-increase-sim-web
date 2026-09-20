@@ -5,6 +5,11 @@ import {
   SimulationInput,
   SingleSimulationResult,
 } from '../models/kd-simulator.models.js';
+import {
+  aggregateBattleCounts,
+  mean,
+  runSimulations,
+} from '../../shared/simulation-utils.js';
 
 function convertKDRatioToPercent(ratio: number) {
   // ratio = kills/deaths
@@ -55,7 +60,10 @@ async function simulate(
 
   const simulationKills = kills - originalStats.kills;
   const simulationDeaths = deaths - originalStats.deaths;
-  const simulationMatches = Math.round((simulationKills / averageKillsPerMatch) + 0.5);
+  const simulationMatches = Math.round(
+    simulationKills / averageKillsPerMatch + 0.5,
+  );
+  const totalMatches = Math.round(kills / averageKillsPerMatch + 0.5);
 
   return {
     originalStats,
@@ -63,34 +71,21 @@ async function simulate(
       kills,
       deaths,
       kdRatio: kills / deaths,
-      averageKillsPerMatch: kills/originalStats.averageKillsPerMatch
+      averageKillsPerMatch: kills / totalMatches,
     },
     sessionStats: {
       kills: simulationKills,
       deaths: simulationDeaths,
       kdRatio: simulationKills / simulationDeaths,
       matches: simulationMatches,
-      averageKillsPerMatch:  simulationKills/simulationMatches
+      averageKillsPerMatch: simulationKills / simulationMatches,
     },
     battlesSimulated: numChallenges,
-    totalMatches: Math.round((kills/averageKillsPerMatch) + 0.5),
+    totalMatches,
     newKDRatio: (kills / deaths).toFixed(5),
     simulationNumber: simulationId,
     totalTime: Date.now() - startTime,
   } as SingleSimulationResult;
-}
-
-async function runThreads(
-  numSimulations: number,
-  originalStats: OriginalStats,
-  options: Options,
-) {
-  const threads = [];
-  for (let i = 0; i < numSimulations; i += 1) {
-    threads.push(simulate(i, originalStats, options));
-  }
-
-  return Promise.all(threads);
 }
 
 function calculateExpectedAverage(
@@ -104,13 +99,7 @@ function calculateExpectedAverage(
   result /= averageKDRatio - targetKDRatio;
   result *= averageKDRatio;
 
-  console.log(`Expected Gunfights ${result}`);
-
   return Math.round(result);
-}
-
-function mean(array: number[]) {
-  return array.reduce((acc, v) => acc + v, 0) / array.length;
 }
 
 export async function handleEvent(event: SimulationInput) {
@@ -136,29 +125,22 @@ export async function handleEvent(event: SimulationInput) {
     averageKillsPerMatch,
   } as OriginalStats;
 
-  console.log(`Starting a total of ${numSimulations} threads.`);
-  const statistics = await runThreads(numSimulations, originalStats, options);
-  console.log(`Finished waiting on a total of ${numSimulations} threads.`);
-
-  const numDiffBattles = statistics
-    .map(stat => stat.battlesSimulated)
-    .filter(stat => !!stat);
+  const statistics = await runSimulations(numSimulations, id =>
+    simulate(id, originalStats, options),
+  );
 
   const numMatchesArr = statistics
     .map(stat => stat.sessionStats.matches)
     .filter(matches => matches !== undefined);
 
-  const averageBattlesRequired = Math.round(mean(numDiffBattles));
+  const { averageBattlesRequired, maxBattlesRequired, minBattlesRequired } =
+    aggregateBattleCounts(statistics.map(stat => stat.battlesSimulated));
 
-  const maxBattlesRequired = Math.max(...numDiffBattles);
-
-  const minBattlesRequired = Math.min(...numDiffBattles);
-
-  const averageMatchesRequired = Math.round(mean(numMatchesArr));
-
-  const maxMatchesRequired = Math.max(...numMatchesArr);
-
-  const minMatchesRequired = Math.min(...numMatchesArr);
+  const {
+    averageBattlesRequired: averageMatchesRequired,
+    maxBattlesRequired: maxMatchesRequired,
+    minBattlesRequired: minMatchesRequired,
+  } = aggregateBattleCounts(numMatchesArr);
 
   const simTimes = statistics.map(stat => stat.totalTime);
 
